@@ -26,7 +26,6 @@ export default class App extends Component {
           products: responseFromApi.data.contents[0].mainContent[tam - 1].contents[0].records
         })
         if (this.state.products.length === 0) this.setState({ flag: true })
-        console.log(this.state.products)
       })
       .catch(err => { return err })
   }
@@ -62,16 +61,19 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
+      <>
         <Navbar />
-        <Search handleSearch={this.handleSearch} handleClick={this.handleClick} getHistory={this.getHistory} />
-        <b>Busquedas:</b>
-        {this.state.history.map((search, i) => {
-          return (
-            <span key={i}> {search} </span>
-          )
-        })}
-        <section className="section is-medium">
+        <div>
+          <Search handleSearch={this.handleSearch} handleClick={this.handleClick} getHistory={this.getHistory} />
+          <b>Busquedas:</b>
+          {this.state.history.map((search, i) => {
+            return (
+              <span key={i}> {search} </span>
+            )
+          })}
+        </div>
+
+        <section className="section is-top">
           <div className="container">
             <div className="columns is-multiline">
               <div className="column is-12">
@@ -82,17 +84,18 @@ export default class App extends Component {
                   </div>
                 </div>
               </div>
+
               {this.state.products.map((producto, i) => {
                 return (
                   <div className="column is-3" key={i}>
                     <div className="card has-equal-height" key={producto._id}>
                       <div className="image-card">
-                        <div className="image has-spacing image is-96x96">
-                          <img src={producto.thumbnailImage[0]} alt='articulo' width="100px" />
+                        <div className="image has-spacing image is-3by2">
+                          <img src={producto.thumbnailImage[0]} alt='articulo'/>
                         </div>
                       </div>
                       <div className="card-content">
-                        <h3 className="title">{producto.productDisplayName[0]}</h3>
+                        <h3 className="title is-size-4">{producto.productDisplayName[0]}</h3>
                         <h2 className="subtitle">${producto.listPrice[0]}</h2>
                       </div>
                     </div>
@@ -103,24 +106,7 @@ export default class App extends Component {
             </div>
           </div>
         </section>
-      </div>
+      </>
     )
   }
 }
-/**
- {this.state.flag ?
-        <h1>No se obtuvieron resultados, Realize nueva busqueda</h1>
-         :
-         <div>
-         {this.state.products.map((product, i) => {
-           return (
-             <div key={i}>
-               <img src={product.thumbnailImage[0]} alt='prod' width='100' />
-               <h1>{product.productDisplayName[0]}</h1>
-               <h1>{product.listPrice[0]}</h1>
-             </div>
-           )
-         })
-         }
-         </div>}
- */
