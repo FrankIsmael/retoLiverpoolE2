@@ -111,7 +111,7 @@ export default class App extends Component {
               {this.state.products.map((producto, i) => {
                 return (
                   <div className="column is-3" key={i}>
-                    <div className="card" key={producto._id} style={{marginRight:"0", padding:"0"}}>
+                    <div className="card" key={producto._id} style={{marginRight:"0", padding:"0",border:"0"}}>
                       <div className="image-card" style={{padding: "0"}}>
                         <div className="image has-spacing image is-3by2">
                           {
