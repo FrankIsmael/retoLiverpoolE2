@@ -5,14 +5,33 @@ import './mybulma/css/mystyles.css';
 import Search from './components/Search';
 import Navbar from './components/Navbar';
 import './mybulma/css/mystyles.css';
+import AwesomeComponent from './components/spinner';
+import { useSpring, animated } from 'react-spring'
 
+const calc = (x, y) => [-(y - window.innerHeight / 2) / 20, (x - window.innerWidth / 2) / 20, 1.1]
+const trans = (x, y, s) => `perspective(00px) scale(${s})`
 
 export default class App extends Component {
   state = {
     products: [],
     history: [],
     searchValue: "",
-    flag: false
+    flag: false,
+    loading: true,
+    img: false
+  }
+
+
+  Card = () => {
+    const [props, set] = useSpring(() => ({ xys: [0, 0, 1], config: { mass: 5, tension: 350, friction: 40 } }))
+    return (
+      <animated.div
+        className="card"
+        onMouseMove={({ clientX: x, clientY: y }) => set({ xys: calc(x, y) })}
+        onMouseLeave={() => set({ xys: [0, 0, 1] })}
+        style={{ transform: props.xys.interpolate(trans) }}
+      ></animated.div>
+    )
   }
 
   getAllProducts = (filter) => {
@@ -23,7 +42,9 @@ export default class App extends Component {
         let array = responseFromApi.data.contents[0].mainContent
         var tam = array.length
         this.setState({
-          products: responseFromApi.data.contents[0].mainContent[tam - 1].contents[0].records
+          products: responseFromApi.data.contents[0].mainContent[tam - 1].contents[0].records,
+          loading: false, img: 1
+
         })
         if (this.state.products.length === 0) this.setState({ flag: true })
       })
@@ -39,6 +60,7 @@ export default class App extends Component {
     this.getAllProducts(this.state.searchValue)
     this.state.history.push(this.state.searchValue)
     this.setHistory(this.state.history)
+    this.setState({ loading: true })
   }
 
   getHistory = () => {
@@ -66,15 +88,17 @@ export default class App extends Component {
         <div>
           <Search handleSearch={this.handleSearch} handleClick={this.handleClick} getHistory={this.getHistory} />
           <b>Busquedas:</b>
-          {this.state.history.map((search, i) => {
-            return (
-              <span key={i}> {search} </span>
-            )
-          })}
+            {this.state.history.map((search, i) => {
+              return (
+                <>
+                    <span className="button" key={i}>{search}</span>
+                </>
+              )
+            })}
         </div>
 
         <section className="section is-top">
-          <div className="container">
+          <div className="container is-fluid">
             <div className="columns is-multiline">
               <div className="column is-12">
                 <div className="columns is-centered">
@@ -84,19 +108,25 @@ export default class App extends Component {
                   </div>
                 </div>
               </div>
-
               {this.state.products.map((producto, i) => {
                 return (
                   <div className="column is-3" key={i}>
-                    <div className="card has-equal-height" key={producto._id}>
-                      <div className="image-card">
+                    <div className="card" key={producto._id} style={{marginRight:"0", padding:"0"}}>
+                      <div className="image-card" style={{padding: "0"}}>
                         <div className="image has-spacing image is-3by2">
-                          <img src={producto.thumbnailImage[0]} alt='articulo'/>
+                          {
+                            this.state.loading ?
+                              <div className="column is-centered">
+                                <AwesomeComponent />
+                              </div>
+                              : <img src={producto.
+                                smallImage[.0]} alt='articulo' />
+                          }
                         </div>
                       </div>
-                      <div className="card-content">
+                      <div className="card-content" style={{padding: "0"}}>
                         <h3 className="title is-size-4">{producto.productDisplayName[0]}</h3>
-                        <h2 className="subtitle">${producto.listPrice[0]}</h2>
+                        <h2 className="subtitle is-size-4 has-text-danger">${producto.listPrice[0]}</h2>
                       </div>
                     </div>
                   </div>
